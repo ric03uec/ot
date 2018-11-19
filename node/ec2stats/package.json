@@ -1,0 +1,42 @@
+{
+  "name": "ec2stats",
+  "version": "1.0.0",
+  "private": false,
+  "scripts": {
+    "start": "node ./bin/main",
+    "lint": "./node_modules/.bin/eslint ."
+  },
+  "dependencies": {
+    "async": "2.6.1",
+    "aws-sdk": "2.340.0",
+    "body-parser": "~1.15.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "=2.6.9",
+    "express": "~4.13.4",
+    "fresh": "=0.5.2",
+    "json2csv": "^4.2.1",
+    "mime": "=1.4.1",
+    "moment": "2.22.2",
+    "negotiator": "=0.6.1",
+    "pug": "2.0.3",
+    "underscore": "1.9.1",
+    "winston": "3.1.0"
+  },
+  "description": "calculating and plotting different ec2 stats.",
+  "main": "bin/main",
+  "devDependencies": {
+    "eslint": "^5.7.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ric03uec/ec2stats.git"
+  },
+  "author": "devashish",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ric03uec/ec2stats/issues"
+  },
+  "homepage": "https://github.com/ric03uec/ec2stats#readme"
+}
