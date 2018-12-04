@@ -25,7 +25,7 @@ class ConnAWS {
     logger.info('AWS access credentials present');
   }
 
-  initialize() {
+  initialize(done) {
     logger.info('Initializing AWS connection');
     logger.info(this.region);
     const config = {
@@ -35,6 +35,10 @@ class ConnAWS {
       region: this.region,
     };
     this.ec2 = new AWS.EC2(config);
+
+    setImmediate(() => {
+      return done();
+    });
   }
 
   validatePermsMetrics() {

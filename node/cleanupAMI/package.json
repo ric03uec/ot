@@ -10,8 +10,9 @@
   "license": "MIT",
   "dependencies": {
     "async": "^2.6.1",
-    "underscore": "^1.9.1",
     "aws-sdk": "2.340.0",
+    "fs-extra": "^7.0.1",
+    "underscore": "^1.9.1",
     "winston": "^3.1.0"
   }
 }
