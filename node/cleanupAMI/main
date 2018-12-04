@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+
+const util = require('util');
+const winston = require('winston');
+const logConfig = require('./config/logger.js');
+const logger = winston.createLogger({
+  transports: [
+    new winston.transports.Console(logConfig.console),
+  ],
+  exitOnError: false, // do not exit on handled exceptions
+});
+
+// global.logger = logger;
+
+const App = require('./app');
+const app = new App();
+
+app.run((err) => {
+  if (err) {
+    logger.error('Error while running application');
+    logger.error(util.inspect(err));
+  } else {
+    util.log('Run completed successfully');
+  }
+});

@@ -1,0 +1,17 @@
+{
+  "name": "cleanupami",
+  "version": "1.0.0",
+  "description": "cleaning up stale AMI's from ec2",
+  "main": "main",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "devashish",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.6.1",
+    "underscore": "^1.9.1",
+    "aws-sdk": "2.340.0",
+    "winston": "^3.1.0"
+  }
+}
