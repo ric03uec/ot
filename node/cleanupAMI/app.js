@@ -35,12 +35,14 @@ class App {
   run(done) {
     logger.info('Running application');
     let flowData = {};
-    const initOrder = [
+    const initFlow = [
       initConnection.bind(this, flowData),
       loadExcludedAMIs.bind(this, flowData),
       getRemoteAMIs.bind(this, flowData),
+      filterExcludedAMIs.bind(this, flowData),
+      removeUnusedAMIs.bind(this, flowData),
     ];
-    async.series(initOrder, (err) => {
+    async.series(initFlow, (err) => {
       return done(err);
     });
   }
@@ -75,6 +77,37 @@ function getRemoteAMIs(flowData, next) {
       return next();
     }
   });
+}
+
+function filterExcludedAMIs(flowData, next) {
+  logger.info('Filtering out the excluded AMIs');
+  logger.info(util.format('\t Total AMIs: %s', _.size(flowData.remoteAMIs)));
+  logger.info(util.format('\t Excluded AMIs: %s', _.size(flowData.excludedAMIs)));
+
+  flowData.toRemoveAMIs = [];
+  _.each(flowData.remoteAMIs,
+    (remoteAMI) => {
+      if (!_.contains(flowData.excludedAMIs, remoteAMI.ImageId)) {
+        flowData.toRemoveAMIs = flowData.toRemoveAMIs.concat(remoteAMI);
+      }
+    }
+  );
+
+  logger.info(util.format('\t AMIs to remove: %s', _.size(flowData.toRemoveAMIs)));
+
+  setImmediate(() => {
+    return next();
+  });
+}
+
+function removeUnusedAMIs(flowData, next) {
+  logger.info('Removing unused AMIs');
+
+  this.remoteAMIs.removeAMIs(flowData.toRemoveAMIs,
+    (err) => {
+      return next(err);
+    }
+  );
 }
 
 module.exports = App;
