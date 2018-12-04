@@ -7,7 +7,7 @@ const AWS = require('aws-sdk');
 
 class ConnAWS {
   constructor(accessKey, secretKey, region) {
-    util.log('Initializing AWS connection');
+    logger.info('Initializing AWS connection');
     this.ec2 = null;
     this.apiVersion = '2016-11-15';
     this.accessKey = accessKey;
@@ -22,12 +22,12 @@ class ConnAWS {
       throw Exception('Secret key cannot be empty');
     }
 
-    util.log('AWS access credentials present');
+    logger.info('AWS access credentials present');
   }
 
   initialize() {
-    util.log('Initializing AWS connection');
-    util.log(this.region);
+    logger.info('Initializing AWS connection');
+    logger.info(this.region);
     const config = {
       apiVersion: this.apiVersion,
       accessKeyId: this.accessKey,
@@ -39,8 +39,8 @@ class ConnAWS {
 
   validatePermsMetrics() {
     // check if the keys have permissions to access metrics
-    util.log('Validating permission for keys');
-    util.log(this.region);
+    logger.info('Validating permission for keys');
+    logger.info(this.region);
   }
 }
 

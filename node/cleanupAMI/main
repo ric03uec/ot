@@ -2,15 +2,26 @@
 
 const util = require('util');
 const winston = require('winston');
+const {combine, timestamp, label, printf} = winston.format;
 const logConfig = require('./config/logger.js');
+
+const logFormat = winston.format.printf(info => {
+  return util.format('%s [%s] %s: %s', info.timestamp, info.label, info.level, info.message);
+});
+
 const logger = winston.createLogger({
+  format: combine(
+    label({ label: 'cleanup-ami' }),
+    timestamp(),
+    logFormat,
+  ),
   transports: [
     new winston.transports.Console(logConfig.console),
   ],
   exitOnError: false, // do not exit on handled exceptions
 });
 
-// global.logger = logger;
+global.logger = logger;
 
 const App = require('./app');
 const app = new App();
@@ -20,6 +31,6 @@ app.run((err) => {
     logger.error('Error while running application');
     logger.error(util.inspect(err));
   } else {
-    util.log('Run completed successfully');
+    logger.info('Run completed successfully');
   }
 });

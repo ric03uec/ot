@@ -6,7 +6,7 @@ const ConnectionAWS = require('./config/connAws.js');
 
 class App {
   constructor() {
-    util.log('Initializing application');
+    logger.info('Initializing application');
     if (_.isEmpty(process.env.AWS_ACCESS_KEY)) {
       throw new Error('AWS Access key is required');
     }
@@ -23,7 +23,7 @@ class App {
   }
 
   run(done) {
-    util.log('Running application');
+    logger.info('Running application');
     const initOrder = [
       initConnection.bind(this),
     ];
