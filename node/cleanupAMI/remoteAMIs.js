@@ -61,6 +61,7 @@ class RemoteAMIs {
     };
 
     //logger.info(util.inspect(flowData));
+    return result();
     const deleteFlow = [
       deregisterAMIs.bind(this, flowData),
       deleteSnapshots.bind(this, flowData)

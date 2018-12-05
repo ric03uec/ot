@@ -4,7 +4,8 @@
   "description": "cleaning up stale AMI's from ec2",
   "main": "main",
   "scripts": {
-    "test": "npm test"
+    "test": "npm test",
+    "start": "./main"
   },
   "author": "devashish",
   "license": "MIT",

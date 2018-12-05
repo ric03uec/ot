@@ -2,9 +2,9 @@ FROM library/node:10.12.0-alpine
 
 MAINTAINER ric03uec <devashish@shippable.com>
 
-RUN mkdir -p /stats
+RUN mkdir -p /ot
 
-ADD ./node /ot/
+ADD . /ot
 
 WORKDIR /ot
 
