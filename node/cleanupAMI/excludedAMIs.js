@@ -13,7 +13,13 @@ class ExcludedAMIs {
     logger.info('Loading all AMIs: ' + this.dataFilePath);
     fs.readFile(this.dataFilePath, 'utf8',
       (err, data) => {
-        return result(err, data.toString().split('\n'));
+        data = data.toString().split('\n');
+        data = _.filter(data,
+          (entry) => {
+            return !_.isEmpty(entry.trim());
+          }
+        );
+        return result(err, data);
       }
     );
   }
