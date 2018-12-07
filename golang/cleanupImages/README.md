@@ -9,5 +9,5 @@
 
 ```
 $ docker build -t ric03uec/ot:remove_images .
-$ docker run -e GOOGLE_APPLICATION_CREDENTIALS=/path/to/creds PROJECT_ID=project_id ric03uec/ot:remove_images
+$ docker run -v $(pwd)/creds:/gcp/creds -e GOOGLE_APPLICATION_CREDENTIALS=/gcp/creds/creds_file.json PROJECT_ID=project_id ric03uec/ot:remove_images
 ```
