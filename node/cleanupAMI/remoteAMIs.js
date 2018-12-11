@@ -60,8 +60,9 @@ class RemoteAMIs {
       amiList: amiList,
     };
 
+    //flowData.amiList = [flowData.amiList[0]];
     //logger.info(util.inspect(flowData));
-    return result();
+    //return result();
     const deleteFlow = [
       deregisterAMIs.bind(this, flowData),
       deleteSnapshots.bind(this, flowData)
@@ -76,7 +77,7 @@ class RemoteAMIs {
 function deregisterAMIs(flowData, next) {
   logger.info('Deregistering AMIs');
 
-  function deregisterAmi(amiInfo, innerNext) {
+  function deregisterAMI(amiInfo, innerNext) {
     const params = {
       ImageId: amiInfo.ImageId,
     }
@@ -85,13 +86,17 @@ function deregisterAMIs(flowData, next) {
       (err, data) => {
         if (err) {
           logger.error('Error deregistering AMI: ' + amiInfo.ImageId);
+        } else {
+          logger.info('Successfully deregistered AMI: ' + amiInfo.ImageId);
         }
         return innerNext(err);
       }
     );
   }
 
-  async.each(flowData.amiList, deregisterAMI,
+  // binding the context is required to access variables and methods of the
+  // class
+  async.each(flowData.amiList, deregisterAMI.bind(this),
     (err) => {
       return next(err);
     }
@@ -106,17 +111,21 @@ function deleteSnapshots(flowData, next) {
       SnapshotId: amiInfo.SnapshotId,
     }
 
-    this.connection.ec2.deleteSnapshot(params,
+    that.connection.ec2.deleteSnapshot(params,
       (err, data) => {
         if (err) {
           logger.error('Error deleting snapshot: ' + amiInfo.SnapshotId);
+        } else {
+          logger.info('Successfully deleted snapshot: ' + amiInfo.SnapshotId);
         }
         return innerNext(err);
       }
     );
   }
 
-  async.each(flowData.amiList, deleteSnapshot,
+  // binding the context is required to access variables and methods of the
+  // class
+  async.each(flowData.amiList, deleteSnapshot.bind(this),
     (err) => {
       return next(err);
     }
