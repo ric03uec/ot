@@ -1,0 +1,17 @@
+{
+  "name": "cleanupimages",
+  "version": "1.0.0",
+  "description": "remove redundant images from GCP account",
+  "main": "main",
+  "scripts": {
+    "test": "npm test",
+    "start": "./main"
+  },
+  "author": "devashish",
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/storage": "^2.3.1",
+    "underscore": "^1.9.1",
+    "winston": "^3.1.0"
+  }
+}

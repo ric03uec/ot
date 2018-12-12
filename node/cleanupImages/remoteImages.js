@@ -2,51 +2,25 @@ const util = require('util');
 const _ = require('underscore');
 const async = require('async');
 
-class RemoteAMIs {
-  constructor(connection, awsAccountId) {
+class RemoteImages {
+  constructor(connection) {
     this.connection = connection;
-    this.awsAccountId = awsAccountId;
   }
 
   getAll(result) {
-    logger.info('Fetching all AMIs');
-    logger.info('\t account id: ' + this.awsAccountId);
-    const params = {
-      Owners: [
-        this.awsAccountId,
-      ],
-      Filters: [
-        {
-          Name: 'state',
-          Values: [
-            'available'
-          ]
-        }
-      ]
-    };
+    logger.info('Fetching all Images');
+    const params = {};
 
-    this.connection.ec2.describeImages(params,
+    logger.info(util.inspect(this.connection))
+    this.connection.getImages(params,
       (err, data) => {
         if (err) {
           return result(err);
         }
-        let amiList = [];
-        if (!_.isEmpty(data.Images)) {
-          _.each(data.Images,
-            (image) => {
-              const ami = {
-                ImageId: image.ImageId,
-                OwnerId: image.OwnerId,
-                SnapshotId: image.BlockDeviceMappings[0].Ebs.SnapshotId,
-              };
+        logger.info(util.inspect(data));
 
-              amiList = amiList.concat(ami);
-            }
-          );
-        }
-
-        logger.info('Fetched all AMIs. Total count: ' + _.size(amiList));
-        return result(null, amiList);
+        logger.info('Fetched all Images. Total count: ' + _.size(data));
+        return result(null, data);
       }
     );
   }
@@ -60,6 +34,7 @@ class RemoteAMIs {
       amiList: amiList,
     };
 
+    //flowData.amiList = [flowData.amiList[0]];
     //logger.info(util.inspect(flowData));
     //return result();
     const deleteFlow = [
@@ -85,7 +60,6 @@ function deregisterAMIs(flowData, next) {
       (err, data) => {
         if (err) {
           logger.error('Error deregistering AMI: ' + amiInfo.ImageId);
-          logger.error(util.inspect(err));
         } else {
           logger.info('Successfully deregistered AMI: ' + amiInfo.ImageId);
         }
@@ -111,11 +85,10 @@ function deleteSnapshots(flowData, next) {
       SnapshotId: amiInfo.SnapshotId,
     }
 
-    this.connection.ec2.deleteSnapshot(params,
+    that.connection.ec2.deleteSnapshot(params,
       (err, data) => {
         if (err) {
           logger.error('Error deleting snapshot: ' + amiInfo.SnapshotId);
-          logger.error(util.inspect(err));
         } else {
           logger.info('Successfully deleted snapshot: ' + amiInfo.SnapshotId);
         }
@@ -133,4 +106,4 @@ function deleteSnapshots(flowData, next) {
   );
 }
 
-module.exports = RemoteAMIs;
+module.exports = RemoteImages;

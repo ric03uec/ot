@@ -93,7 +93,20 @@ function filterExcludedAMIs(flowData, next) {
     }
   );
 
-  logger.info(util.format('\t AMIs to remove: %s', _.size(flowData.toRemoveAMIs)));
+  //let amisInDb = [];
+  //let mappedRemoteAMIs = _.map(flowData.remoteAMIs, (remoteAMI) => {
+  //  return remoteAMI.ImageId;
+  //});
+
+  //_.each(flowData.excludedAMIs,
+  //  (excludedAMI) => {
+  //    if (!_.contains(mappedRemoteAMIs, excludedAMI)) {
+  //      amisInDb = amisInDb.concat(excludedAMI);
+  //    }
+  //  }
+  //);
+
+  //logger.info(util.format('\t AMIs to remove: %s', _.size(flowData.toRemoveAMIs)));
 
   setImmediate(() => {
     return next();
