@@ -51,6 +51,45 @@ class RemoteAMIs {
     );
   }
 
+  getSnapshots(result) {
+    logger.info('Fetching all Snapshots');
+    logger.info('\t account id: ' + this.awsAccountId);
+
+    const params = {
+      OwnerIds: [
+        this.awsAccountId,
+      ],
+      Filters: [
+        {
+          Name: 'status',
+          Values: [
+            'completed'
+          ]
+        }
+      ]
+    };
+
+    this.connection.ec2.describeSnapshots(params,
+      (err, data) => {
+        if (err) {
+          return result(err);
+        }
+        let snapshotList = [];
+        if (! _.isEmpty(data.Snapshots)) {
+          _.each(data.Snapshots,
+            (snapshot) => {
+              snapshotList = snapshotList.concat(snapshot.SnapshotId);
+            }
+          );
+        }
+
+        logger.info('Fetched all Snapshots. Total count: ' +
+          _.size(snapshotList));
+        return result(null, snapshotList);
+      }
+    );
+  }
+
   removeAMIs(amiList, result) {
     logger.info('Removing AMIs from AWS account');
     logger.info('\t account id: ' + this.awsAccountId);
@@ -62,6 +101,9 @@ class RemoteAMIs {
 
     //logger.info(util.inspect(flowData));
     //return result();
+
+    //README: async.each should be applied to each AMI+Snapshot instead of
+    // the full list of AMI's and then the full list of Snapshots
     const deleteFlow = [
       deregisterAMIs.bind(this, flowData),
       deleteSnapshots.bind(this, flowData)
@@ -70,6 +112,37 @@ class RemoteAMIs {
     async.series(deleteFlow, (err) => {
       return result(err);
     });
+  }
+
+  removeSnapshots(snapshotList, result) {
+    logger.info('Removing Snapshots from AWS account');
+    logger.info('\t account id: ' + this.awsAccountId);
+
+    function deleteSnapshot(snapshotId, innerNext) {
+      const params = {
+        SnapshotId: snapshotId,
+      }
+
+      this.connection.ec2.deleteSnapshot(params,
+        (err, data) => {
+          if (err) {
+            logger.error('Error deleting snapshot: ' + snapshotId);
+            logger.error(util.inspect(err));
+          } else {
+            logger.info('Successfully deleted snapshot: ' + snapshotId);
+          }
+          return innerNext(err);
+        }
+      );
+    }
+
+    // binding the context is required to access variables and methods of the
+    // class
+    async.eachSeries(snapshotList, deleteSnapshot.bind(this),
+      (err) => {
+        return result(err);
+      }
+    );
   }
 }
 

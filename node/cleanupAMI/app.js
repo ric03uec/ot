@@ -39,8 +39,11 @@ class App {
       initConnection.bind(this, flowData),
       loadExcludedAMIs.bind(this, flowData),
       getRemoteAMIs.bind(this, flowData),
-      filterExcludedAMIs.bind(this, flowData),
-      removeUnusedAMIs.bind(this, flowData),
+      //filterExcludedAMIs.bind(this, flowData),
+      //removeUnusedAMIs.bind(this, flowData),
+      getSnapshots.bind(this, flowData),
+      filterExcludedSnapshots.bind(this, flowData),
+      removeUnusedSnapshots.bind(this, flowData),
     ];
     async.series(initFlow, (err) => {
       return done(err);
@@ -106,7 +109,7 @@ function filterExcludedAMIs(flowData, next) {
   //  }
   //);
 
-  //logger.info(util.format('\t AMIs to remove: %s', _.size(flowData.toRemoveAMIs)));
+  logger.info(util.format('\t AMIs to remove: %s', _.size(flowData.toRemoveAMIs)));
 
   setImmediate(() => {
     return next();
@@ -117,6 +120,49 @@ function removeUnusedAMIs(flowData, next) {
   logger.info('Removing unused AMIs');
 
   this.remoteAMIs.removeAMIs(flowData.toRemoveAMIs,
+    (err) => {
+      return next(err);
+    }
+  );
+}
+
+function getSnapshots(flowData, next) {
+  logger.info('Getting all snapshots owned by the account');
+
+  this.remoteAMIs.getSnapshots((err, data) => {
+    if (err) {
+      return next(err);
+    } else {
+      flowData.snapshots = data;
+    }
+
+    return next();
+  });
+}
+
+function filterExcludedSnapshots(flowData, next) {
+  logger.info('Filtering out excluded Snapshots');
+  let excludedSnapshots = _.map(flowData.remoteAMIs,
+    (remoteAMI) => {
+      return remoteAMI.SnapshotId;
+    }
+  );
+  logger.info(util.format('\t Total Snapshots: %s', _.size(flowData.snapshots)));
+  logger.info(util.format('\t Excluded Snapshots: %s', _.size(excludedSnapshots)));
+
+  flowData.snapshots = _.without(flowData.snapshots, ...excludedSnapshots);
+
+  //flowData.snapshots = flowData.snapshots.slice(0, 3);
+
+  logger.info(util.format('\t Snapshots to remove: %s', _.size(flowData.snapshots)));
+
+  return next();
+}
+
+function removeUnusedSnapshots(flowData, next) {
+  logger.info('Removing unused Snapshots');
+
+  this.remoteAMIs.removeSnapshots(flowData.snapshots,
     (err) => {
       return next(err);
     }
