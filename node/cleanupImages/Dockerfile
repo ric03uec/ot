@@ -1,20 +1,13 @@
-FROM library/golang:1.11.2-alpine3.8 AS builder
+FROM library/node:10.12.0-alpine
+
 MAINTAINER ric03uec <devashish@shippable.com>
 
-RUN apk update && apk add --no-cache dep git
+RUN mkdir -p /ot
 
-ENV GOPATH=/go
-ENV PROJECT_DIR=$GOPATH/src/github.com/ric03uec/ot
-RUN mkdir -p $PROJECT_DIR
+ADD . /ot
 
-COPY . $PROJECT_DIR
-WORKDIR $PROJECT_DIR
+WORKDIR /ot
 
-RUN cd $PROJECT_DIR \
-	&& dep ensure \
-	&& go build -o /bin/cleanup_images main.go
+RUN npm install
 
-FROM library/alpine:3.8
-COPY --from=builder /bin/cleanup_images /bin/cleanup_images
-
-ENTRYPOINT ["/bin/cleanup_images"]
+ENTRYPOINT npm start

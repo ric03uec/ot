@@ -5,7 +5,7 @@
   "main": "main",
   "scripts": {
     "test": "npm test",
-    "start": "./main"
+    "start": "node main.js"
   },
   "author": "devashish",
   "license": "MIT",
